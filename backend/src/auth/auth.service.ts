@@ -7,7 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/entities/user.entity';
-import { LoginDTO, RegisterDTO } from 'src/models/user.model';
+import { LoginDTO, RegisterDTO, UpdateUserDTO } from 'src/models/user.model';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -41,9 +41,24 @@ export class AuthService {
       }
       const payload = { username: user.username };
       const token = this.jwtService.sign(payload);
-      return {user: {...user.toJSON(), token}};
+      return { user: { ...user.toJSON(), token } };
     } catch (err) {
       throw new UnauthorizedException('Invalid credentials');
     }
+  }
+
+  async findCurrentUser(username: string) {
+    const user = await this.userRepo.findOne({ where: { username } });
+    const payload = { username };
+    const token = this.jwtService.sign(payload);
+    return { user: { ...user.toJSON(), token } };
+  }
+
+  async updateUser(username: string, data: UpdateUserDTO) {
+    await this.userRepo.update({ username }, data);
+    const user = await this.userRepo.findOne({ where: { username } });
+    const payload = { username };
+    const token = this.jwtService.sign(payload);
+    return { user: { ...user.toJSON(), token } };
   }
 }

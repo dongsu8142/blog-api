@@ -5,11 +5,17 @@ import { AppService } from './app.service';
 import { DatabaseConnectinService } from './database-connection.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { ArticleModule } from './article/article.module';
 
 @Module({
-  imports: [TypeOrmModule.forRootAsync({
-    useClass: DatabaseConnectinService
-  }), AuthModule, UserModule],
+  imports: [
+    TypeOrmModule.forRootAsync({
+      useClass: DatabaseConnectinService,
+    }),
+    AuthModule,
+    UserModule,
+    ArticleModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

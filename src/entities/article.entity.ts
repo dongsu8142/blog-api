@@ -2,7 +2,7 @@ import {
   BeforeInsert,
   Column,
   Entity,
-  JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   RelationCount,
@@ -27,7 +27,7 @@ export class ArticleEntity extends AbstractEntity {
   body: string;
 
   @ManyToMany((type) => UserEntity, (user) => user.favorites, { eager: true })
-  @JoinColumn()
+  @JoinTable()
   favoritedBy: UserEntity[];
 
   @RelationCount((article: ArticleEntity) => article.favoritedBy)

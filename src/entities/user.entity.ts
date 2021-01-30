@@ -12,6 +12,7 @@ import { classToPlain, Exclude } from 'class-transformer';
 import { IsEmail } from 'class-validator';
 import { AbstractEntity } from './abstract-entity';
 import { ArticleEntity } from './article.entity';
+import { CommentEntity } from './comment.entity';
 
 @Entity('users')
 export class UserEntity extends AbstractEntity {
@@ -41,6 +42,9 @@ export class UserEntity extends AbstractEntity {
 
   @OneToMany((type) => ArticleEntity, (article) => article.author)
   articles: ArticleEntity[];
+
+  @OneToMany((type) => CommentEntity, (comment) => comment.author)
+  comments: CommentEntity[];
 
   @ManyToMany((type) => ArticleEntity, (article) => article.favoritedBy)
   @JoinColumn()

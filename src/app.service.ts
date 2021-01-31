@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { TagEntity } from './entities/tag.entity';
 
 @Injectable()
@@ -9,11 +10,8 @@ export class AppService {
     @InjectRepository(TagEntity) private tagRepo: Repository<TagEntity>,
   ) {}
 
-  getHello(): string {
-    return 'Hello World!';
-  }
-
-  findTags() {
-    return this.tagRepo.find();
+  async findTags(): Promise<string[]> {
+    const tags = await this.tagRepo.find();
+    return tags.map(tag => tag.tag);
   }
 }

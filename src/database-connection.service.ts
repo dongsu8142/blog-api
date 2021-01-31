@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 @Injectable()
-export class DatabaseConnectinService implements TypeOrmOptionsFactory {
+export class DatabaseConnectionService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       name: 'default',
@@ -14,7 +14,7 @@ export class DatabaseConnectinService implements TypeOrmOptionsFactory {
       database: process.env.DATABASE_DB,
       synchronize: true,
       dropSchema: true,
-      logging: true,
+      logging: false,
       entities: ['dist/**/*.entity.js'],
     };
   }

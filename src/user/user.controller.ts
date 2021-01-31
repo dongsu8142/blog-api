@@ -1,34 +1,56 @@
 import {
-  Body,
   Controller,
   Get,
-  Put,
   UseGuards,
+  Put,
+  Body,
   ValidationPipe,
 } from '@nestjs/common';
+import {
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiUnauthorizedResponse,
+  ApiBody,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/auth/user.decorator';
+import { AuthService } from 'src/auth/auth.service';
 import { UserEntity } from 'src/entities/user.entity';
-import { UpdateUserDTO } from 'src/models/user.model';
+import {
+  UpdateUserDTO,
+  AuthResponse,
+  UpdateUserBody,
+} from 'src/models/user.model';
+import { ResponseObject } from 'src/models/response.model';
 
 @Controller('user')
 export class UserController {
   constructor(private authService: AuthService) {}
 
+  @ApiBearerAuth()
+  @ApiOkResponse({ description: 'Current user' })
+  @ApiUnauthorizedResponse()
   @Get()
   @UseGuards(AuthGuard())
-  findCurrentUser(@User() { username }: UserEntity) {
-    return this.authService.findCurrentUser(username);
+  async findCurrentUser(
+    @User() { username }: UserEntity,
+  ): Promise<ResponseObject<'user', AuthResponse>> {
+    const user = await this.authService.findCurrentUser(username);
+    return { user };
   }
 
+  @ApiBearerAuth()
+  @ApiOkResponse({ description: 'Update current user' })
+  @ApiUnauthorizedResponse()
+  @ApiBody({ type: UpdateUserBody })
   @Put()
   @UseGuards(AuthGuard())
-  update(
+  async update(
     @User() { username }: UserEntity,
-    @Body(new ValidationPipe({ transform: true, whitelist: true }))
-    data: { user: UpdateUserDTO },
-  ) {
-    return this.authService.updateUser(username, data.user);
+    @Body('user', new ValidationPipe({ transform: true, whitelist: true }))
+    data: UpdateUserDTO,
+  ): Promise<ResponseObject<'user', AuthResponse>> {
+    const user = await this.authService.updateUser(username, data);
+    return { user };
   }
 }

@@ -1,18 +1,20 @@
 import {
-  BeforeInsert,
-  Column,
   Entity,
-  JoinTable,
-  ManyToMany,
+  Column,
+  BeforeInsert,
   ManyToOne,
-  OneToMany,
+  ManyToMany,
   RelationCount,
+  JoinTable,
+  OneToMany,
 } from 'typeorm';
-import { AbstractEntity } from './abstract-entity';
-import * as slugify from 'slug';
-import { UserEntity } from './user.entity';
 import { classToPlain } from 'class-transformer';
+import * as slugify from 'slug';
+
+import { AbstractEntity } from './abstract-entity';
+import { UserEntity } from './user.entity';
 import { CommentEntity } from './comment.entity';
+import { ArticleResponse } from 'src/models/article.models';
 
 @Entity('articles')
 export class ArticleEntity extends AbstractEntity {
@@ -56,12 +58,12 @@ export class ArticleEntity extends AbstractEntity {
     return classToPlain(this);
   }
 
-  toArticle(user: UserEntity) {
+  toArticle(user?: UserEntity): ArticleResponse {
     let favorited = null;
     if (user) {
       favorited = this.favoritedBy.map((user) => user.id).includes(user.id);
     }
-    const article = this.toJSON();
+    const article: any = this.toJSON();
     delete article.favoritedBy;
     return { ...article, favorited };
   }

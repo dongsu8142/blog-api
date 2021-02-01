@@ -1,9 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { AppService } from './app.service';
 import { ResponseObject } from './models/response.model';
 
+@ApiTags('tags')
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}

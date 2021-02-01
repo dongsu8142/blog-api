@@ -12,6 +12,8 @@ import {
   ApiOkResponse,
   ApiUnauthorizedResponse,
   ApiBearerAuth,
+  ApiTags,
+  ApiSecurity,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -22,6 +24,7 @@ import { UserService } from './user.service';
 import { ResponseObject } from 'src/models/response.model';
 import { ProfileResponse } from 'src/models/user.model';
 
+@ApiTags('profiles')
 @Controller('profiles')
 export class ProfileController {
   constructor(private userService: UserService) {}
@@ -40,7 +43,7 @@ export class ProfileController {
     return { profile };
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({ description: 'Follow user' })
   @ApiUnauthorizedResponse()
   @Post('/:username/follow')
@@ -54,7 +57,7 @@ export class ProfileController {
     return { profile };
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({ description: 'Unfollow user' })
   @ApiUnauthorizedResponse()
   @Delete('/:username/follow')

@@ -4,8 +4,9 @@ import {
   ApiOkResponse,
   ApiUnauthorizedResponse,
   ApiBody,
+  ApiTags,
+  ApiSecurity,
 } from '@nestjs/swagger';
-
 import { AuthService } from './auth.service';
 import {
   RegisterDTO,
@@ -16,6 +17,7 @@ import {
 } from '../models/user.model';
 import { ResponseObject } from 'src/models/response.model';
 
+@ApiTags('users')
 @Controller('users')
 export class AuthController {
   constructor(private authService: AuthService) {}

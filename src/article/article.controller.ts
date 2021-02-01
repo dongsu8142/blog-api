@@ -17,8 +17,9 @@ import {
   ApiUnauthorizedResponse,
   ApiCreatedResponse,
   ApiBody,
+  ApiTags,
+  ApiSecurity,
 } from '@nestjs/swagger';
-
 import { User } from 'src/auth/user.decorator';
 import { OptionalAuthGuard } from 'src/auth/optional-auth.gaurd';
 import {
@@ -40,6 +41,7 @@ import { CommentsService } from './comments.service';
 import { ArticleService } from './article.service';
 import { ResponseObject } from 'src/models/response.model';
 
+@ApiTags('articles')
 @Controller('articles')
 export class ArticleController {
   constructor(
@@ -64,7 +66,7 @@ export class ArticleController {
     };
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({ description: 'List all articles of users feed' })
   @ApiUnauthorizedResponse()
   @Get('/feed')
@@ -91,7 +93,7 @@ export class ArticleController {
     return { article: article.toArticle(user) };
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiCreatedResponse({ description: 'Create article' })
   @ApiUnauthorizedResponse()
   @ApiBody({ type: CreateArticleBody })
@@ -101,12 +103,11 @@ export class ArticleController {
     @User() user: UserEntity,
     @Body('article', ValidationPipe) data: CreateArticleDTO,
   ): Promise<ResponseObject<'article', ArticleResponse>> {
-    console.log(user);
     const article = await this.articleService.createArticle(user, data);
     return { article };
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({ description: 'Update article' })
   @ApiUnauthorizedResponse()
   @ApiBody({ type: UpdateArticleBody })
@@ -121,7 +122,7 @@ export class ArticleController {
     return { article };
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({ description: 'Delete article' })
   @ApiUnauthorizedResponse()
   @Delete('/:slug')
@@ -143,7 +144,7 @@ export class ArticleController {
     return { comments };
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiCreatedResponse({ description: 'Create new comment' })
   @ApiUnauthorizedResponse()
   @ApiBody({ type: CreateCommentBody })
@@ -158,7 +159,7 @@ export class ArticleController {
     return { comment };
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({ description: 'Delete comment' })
   @ApiUnauthorizedResponse()
   @Delete('/:slug/comments/:id')
@@ -171,7 +172,7 @@ export class ArticleController {
     return { comment };
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiCreatedResponse({ description: 'Favorite article' })
   @ApiUnauthorizedResponse()
   @Post('/:slug/favorite')
@@ -184,7 +185,7 @@ export class ArticleController {
     return { article };
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({ description: 'Unfavorite article' })
   @ApiUnauthorizedResponse()
   @Delete('/:slug/favorite')

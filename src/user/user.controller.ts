@@ -11,6 +11,8 @@ import {
   ApiBearerAuth,
   ApiUnauthorizedResponse,
   ApiBody,
+  ApiTags,
+  ApiSecurity,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/auth/user.decorator';
@@ -23,6 +25,8 @@ import {
 } from 'src/models/user.model';
 import { ResponseObject } from 'src/models/response.model';
 
+@ApiTags('user')
+@ApiSecurity('access-token')
 @Controller('user')
 export class UserController {
   constructor(private authService: AuthService) {}

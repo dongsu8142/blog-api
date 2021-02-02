@@ -25,14 +25,31 @@ export class AuthService {
 
   async register(credentials: RegisterDTO): Promise<AuthResponse> {
     try {
+      const findUserUsername = await this.userRepo.findOne({
+        where: { username: credentials.username },
+      });
+      const findUserEmail = await this.userRepo.findOne({
+        where: { email: credentials.email },
+      });
+      if (findUserUsername) {
+        throw new ConflictException('The username has already been taken');
+      }
+      if (findUserEmail) {
+        throw new ConflictException('An email has already been taken');
+      }
       const user = this.userRepo.create(credentials);
       await user.save();
-      const payload = { username: user.username };
+      const payload = { username: user.username, email: user.email };
       const token = this.jwtService.sign(payload);
       return { ...user.toJSON(), token };
     } catch (err) {
       if (err.code === '23505') {
-        throw new ConflictException('Username has already been taken');
+        throw new ConflictException(
+          'The Username and Email has already been taken',
+        );
+      }
+      if (err.status === 409) {
+        throw new ConflictException(err.message);
       }
       throw new InternalServerErrorException();
     }
@@ -45,7 +62,7 @@ export class AuthService {
       if (!isValid) {
         throw new UnauthorizedException('Invalid credentials');
       }
-      const payload = { username: user.username };
+      const payload = { username: user.username, email: user.email };
       const token = this.jwtService.sign(payload);
       return { ...user.toJSON(), token };
     } catch (err) {
@@ -53,20 +70,24 @@ export class AuthService {
     }
   }
 
-  async findCurrentUser(username: string): Promise<AuthResponse> {
-    const user = await this.userRepo.findOne({ where: { username } });
-    const payload = { username };
+  async findCurrentUser(
+    username: string,
+    email: string,
+  ): Promise<AuthResponse> {
+    const user = await this.userRepo.findOne({ where: { username, email } });
+    const payload = { username: user.username, email: user.email };
     const token = this.jwtService.sign(payload);
     return { ...user.toJSON(), token };
   }
 
   async updateUser(
     username: string,
+    email: string,
     data: UpdateUserDTO,
   ): Promise<AuthResponse> {
-    await this.userRepo.update({ username }, data);
-    const user = await this.userRepo.findOne({ where: { username } });
-    const payload = { username };
+    await this.userRepo.update({ username, email }, data);
+    const user = await this.userRepo.findOne({ where: { username, email } });
+    const payload = { username: user.username, email: user.email };
     const token = this.jwtService.sign(payload);
     return { ...user.toJSON(), token };
   }

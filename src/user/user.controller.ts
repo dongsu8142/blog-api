@@ -37,9 +37,9 @@ export class UserController {
   @Get()
   @UseGuards(AuthGuard())
   async findCurrentUser(
-    @User() { username }: UserEntity,
+    @User() { username, email }: UserEntity,
   ): Promise<ResponseObject<'user', AuthResponse>> {
-    const user = await this.authService.findCurrentUser(username);
+    const user = await this.authService.findCurrentUser(username, email);
     return { user };
   }
 
@@ -50,11 +50,11 @@ export class UserController {
   @Put()
   @UseGuards(AuthGuard())
   async update(
-    @User() { username }: UserEntity,
+    @User() { username, email }: UserEntity,
     @Body('user', new ValidationPipe({ transform: true, whitelist: true }))
     data: UpdateUserDTO,
   ): Promise<ResponseObject<'user', AuthResponse>> {
-    const user = await this.authService.updateUser(username, data);
+    const user = await this.authService.updateUser(username, email, data);
     return { user };
   }
 }

@@ -57,6 +57,7 @@ export class UpdateUserBody {
 
 export interface AuthPayload {
   username: string;
+  email: string;
 }
 
 export interface UserResponse {

@@ -17,7 +17,7 @@ import { UserResponse } from 'src/models/user.model';
 
 @Entity('users')
 export class UserEntity extends AbstractEntity {
-  @Column()
+  @Column({ unique: true })
   @IsEmail()
   email: string;
 
